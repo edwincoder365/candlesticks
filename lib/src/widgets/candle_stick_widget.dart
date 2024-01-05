@@ -28,12 +28,15 @@ class CandleStickWidget extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return CandleStickRenderObject(candles, index, candleWidth, low, high, candleStyle, ma7, ma25, ma99);
+    return CandleStickRenderObject(
+        candles, index, candleWidth, low, high, candleStyle, ma7, ma25, ma99);
   }
 
   @override
-  void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
-    CandleStickRenderObject candlestickRenderObject = renderObject as CandleStickRenderObject;
+  void updateRenderObject(
+      BuildContext context, covariant RenderObject renderObject) {
+    CandleStickRenderObject candlestickRenderObject =
+        renderObject as CandleStickRenderObject;
 
     if (index <= 0 && candlestickRenderObject._close != candles[0].close) {
       candlestickRenderObject._candles = candles;
@@ -69,8 +72,16 @@ class CandleStickRenderObject extends RenderBox {
   late CandleStyle? _candleStyle;
   late bool _ma7, _ma25, _ma99;
 
-  CandleStickRenderObject(List<Candle> candles, int index, double candleWidth, double low, double high,
-      CandleStyle? candleStyle, bool ma7, bool ma25, bool ma99) {
+  CandleStickRenderObject(
+      List<Candle> candles,
+      int index,
+      double candleWidth,
+      double low,
+      double high,
+      CandleStyle? candleStyle,
+      bool ma7,
+      bool ma25,
+      bool ma99) {
     _candles = candles;
     _index = index;
     _candleWidth = candleWidth;
@@ -89,7 +100,8 @@ class CandleStickRenderObject extends RenderBox {
   }
 
   /// draws a single candle
-  void paintCandle(PaintingContext context, Offset offset, int index, Candle candle, double range) {
+  void paintCandle(PaintingContext context, Offset offset, int index,
+      Candle candle, double range) {
     Color color = _candleStyle != null
         ? (candle.isBull ? _candleStyle!.bullColor : _candleStyle!.bearColor)
         : (candle.isBull ? Colors.green : Colors.red);
@@ -156,7 +168,8 @@ class CandleStickRenderObject extends RenderBox {
         dy2 = 0;
       }
 
-      path.cubicTo(preP.dx - dx1, preP.dy - dy1, curP.dx + dx2, curP.dy + dy2, curP.dx, curP.dy);
+      path.cubicTo(preP.dx - dx1, preP.dy - dy1, curP.dx + dx2, curP.dy + dy2,
+          curP.dx, curP.dy);
 
       dx1 = dx2;
       dy1 = dy2;
@@ -192,8 +205,9 @@ class CandleStickRenderObject extends RenderBox {
           context.canvas,
           visibleCandles
               .where((e) => (e['c'] as Candle).ma7 != null)
-              .map((e) =>
-              Offset(size.width + offset.dx - (e['i'] + 0.5) * _candleWidth, offset.dy + (_high - (e['c'] as Candle).ma7!) / range))
+              .map((e) => Offset(
+                  size.width + offset.dx - (e['i'] + 0.5) * _candleWidth,
+                  offset.dy + (_high - (e['c'] as Candle).ma7!) / range))
               .toList(),
           Colors.orangeAccent);
 
@@ -202,8 +216,9 @@ class CandleStickRenderObject extends RenderBox {
           context.canvas,
           visibleCandles
               .where((e) => (e['c'] as Candle).ma25 != null)
-              .map((e) =>
-              Offset(size.width + offset.dx - (e['i'] + 0.5) * _candleWidth, offset.dy + (_high - (e['c'] as Candle).ma25!) / range))
+              .map((e) => Offset(
+                  size.width + offset.dx - (e['i'] + 0.5) * _candleWidth,
+                  offset.dy + (_high - (e['c'] as Candle).ma25!) / range))
               .toList(),
           Colors.purpleAccent);
 
@@ -211,9 +226,10 @@ class CandleStickRenderObject extends RenderBox {
       paintMA(
           context.canvas,
           visibleCandles
-          .where((e) => (e['c'] as Candle).ma99 != null)
-              .map((e) =>
-              Offset(size.width + offset.dx - (e['i'] + 0.5) * _candleWidth, offset.dy + (_high - (e['c'] as Candle).ma99!) / range))
+              .where((e) => (e['c'] as Candle).ma99 != null)
+              .map((e) => Offset(
+                  size.width + offset.dx - (e['i'] + 0.5) * _candleWidth,
+                  offset.dy + (_high - (e['c'] as Candle).ma99!) / range))
               .toList(),
           Colors.blueAccent);
 
@@ -222,12 +238,15 @@ class CandleStickRenderObject extends RenderBox {
     context.canvas.restore();
   }
 
-  void paintMinLowMaxHigh(PaintingContext context, List<Candle> inArea, Offset offset, double range) {
+  void paintMinLowMaxHigh(PaintingContext context, List<Candle> inArea,
+      Offset offset, double range) {
     final minLow = inArea.map((e) => e.low).reduce(min);
     final maxHigh = inArea.map((e) => e.high).reduce(max);
 
-    final minLowX =
-        size.width + offset.dx - (_candles.indexWhere((e) => e.low == minLow) - _index + 0.5) * _candleWidth;
+    final minLowX = size.width +
+        offset.dx -
+        (_candles.indexWhere((e) => e.low == minLow) - _index + 0.5) *
+            _candleWidth;
     final minLowY = offset.dy + (_high - minLow) / range;
     context.canvas.drawLine(
         Offset(
@@ -239,8 +258,10 @@ class CandleStickRenderObject extends RenderBox {
           ..color = Colors.black
           ..style = PaintingStyle.fill);
 
-    final maxHighX =
-        size.width + offset.dx - (_candles.indexWhere((e) => e.high == maxHigh) - _index + 0.5) * _candleWidth;
+    final maxHighX = size.width +
+        offset.dx -
+        (_candles.indexWhere((e) => e.high == maxHigh) - _index + 0.5) *
+            _candleWidth;
     final maxHighY = offset.dy + ((_high - maxHigh) / range);
     context.canvas.drawLine(
         Offset(
@@ -253,7 +274,9 @@ class CandleStickRenderObject extends RenderBox {
           ..style = PaintingStyle.fill);
 
     TextPainter lowTp = TextPainter(
-        text: TextSpan(style: TextStyle(fontSize: 10), text: HelperFunctions.priceToString(minLow)),
+        text: TextSpan(
+            style: TextStyle(fontSize: 10),
+            text: HelperFunctions.priceToString(minLow)),
         textDirection: TextDirection.ltr);
     lowTp.layout();
     lowTp.paint(
@@ -264,7 +287,9 @@ class CandleStickRenderObject extends RenderBox {
             minLowY - lowTp.height / 2));
 
     TextPainter highTp = TextPainter(
-        text: TextSpan(style: TextStyle(fontSize: 10), text: HelperFunctions.priceToString(maxHigh)),
+        text: TextSpan(
+            style: TextStyle(fontSize: 10),
+            text: HelperFunctions.priceToString(maxHigh)),
         textDirection: TextDirection.ltr);
     highTp.layout();
     highTp.paint(

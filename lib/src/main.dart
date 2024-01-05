@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:candlesticks_plus/src/models/candle.dart';
 import 'package:candlesticks_plus/src/models/candle_style.dart';
 import 'package:candlesticks_plus/src/theme/theme_data.dart';
+import 'package:candlesticks_plus/src/widgets/candle_info_text.dart';
 import 'package:candlesticks_plus/src/widgets/toolbar_action.dart';
 import 'package:candlesticks_plus/src/widgets/mobile_chart.dart';
 import 'package:candlesticks_plus/src/widgets/desktop_chart.dart';
@@ -20,6 +21,7 @@ class Candlesticks extends StatefulWidget {
 
   /// this callback calls when the last candle gets visible
   final Future<void> Function()? onLoadMoreCandles;
+  final Function(Candle? candle)? onCurrentCandle;
 
   /// list of buttons you what to add on top tool bar
   final List<ToolBarAction> actions;
@@ -28,6 +30,8 @@ class Candlesticks extends StatefulWidget {
   final CandleStyle? candleStyle;
 
   final bool showToolbar;
+  final bool showZoomButtons;
+  final bool showCandleDetailsOverlay;
 
   final bool ma7, ma25, ma99;
 
@@ -43,7 +47,10 @@ class Candlesticks extends StatefulWidget {
     this.ma7 = true,
     this.ma25 = true,
     this.ma99 = true,
-    this.watermark
+    this.watermark,
+    this.showZoomButtons = false,
+    this.onCurrentCandle,
+    this.showCandleDetailsOverlay = true,
   }) : super(key: key);
 
   @override
@@ -64,6 +71,8 @@ class _CandlesticksState extends State<Candlesticks> {
   /// true when widget.onLoadMoreCandles is fetching new candles.
   bool isCallingLoadMore = false;
 
+  Candle? candle;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -82,13 +91,19 @@ class _CandlesticksState extends State<Candlesticks> {
                 candleWidth = max(candleWidth, 4);
               });
             },
-            children: widget.actions,
+            showZoomButtons: widget.showZoomButtons,
+            children: [
+              ...widget.actions,
+            ],
           ),
+        SizedBox(
+          height: 8,
+        ),
         if (widget.candles.length == 0)
           Expanded(
             child: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).gold,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           )
@@ -98,7 +113,10 @@ class _CandlesticksState extends State<Candlesticks> {
               tween: Tween(begin: 6.toDouble(), end: candleWidth),
               duration: Duration(milliseconds: 120),
               builder: (_, double width, __) {
-                if (kIsWeb || Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+                if (kIsWeb ||
+                    Platform.isMacOS ||
+                    Platform.isWindows ||
+                    Platform.isLinux) {
                   return DesktopChart(
                     watermark: widget.watermark,
                     ma7: widget.ma7,
@@ -130,7 +148,8 @@ class _CandlesticksState extends State<Candlesticks> {
                       lastIndex = index;
                     },
                     onReachEnd: () {
-                      if (isCallingLoadMore == false && widget.onLoadMoreCandles != null) {
+                      if (isCallingLoadMore == false &&
+                          widget.onLoadMoreCandles != null) {
                         isCallingLoadMore = true;
                         widget.onLoadMoreCandles!().then((_) {
                           isCallingLoadMore = false;
@@ -169,7 +188,8 @@ class _CandlesticksState extends State<Candlesticks> {
                       lastIndex = index;
                     },
                     onReachEnd: () {
-                      if (isCallingLoadMore == false && widget.onLoadMoreCandles != null) {
+                      if (isCallingLoadMore == false &&
+                          widget.onLoadMoreCandles != null) {
                         isCallingLoadMore = true;
                         widget.onLoadMoreCandles!().then((_) {
                           isCallingLoadMore = false;
@@ -179,6 +199,11 @@ class _CandlesticksState extends State<Candlesticks> {
                     candleWidth: width,
                     candles: widget.candles,
                     index: index,
+                    onCurrentCandle: (candel) {
+                      candle = candel;
+                      widget.onCurrentCandle?.call(candel);
+                    },
+                    showCandleDetailsOverlay: widget.showCandleDetailsOverlay,
                   );
                 }
               },

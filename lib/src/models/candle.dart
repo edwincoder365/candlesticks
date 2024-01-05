@@ -27,9 +27,13 @@ class Candle {
 
   double? ma7, ma25, ma99;
 
-  double? get maxMa => ma7 != null && ma25 != null && ma99 != null ? max(max(ma7 ?? 0, ma25 ?? 0), ma99 ?? 0) : null;
+  double? get maxMa => ma7 != null && ma25 != null && ma99 != null
+      ? max(max(ma7 ?? 0, ma25 ?? 0), ma99 ?? 0)
+      : null;
 
-  double? get minMa => ma7 != null && ma25 != null && ma99 != null ? min(min(ma7 ?? 0, ma25 ?? 0), ma99 ?? 0) : null;
+  double? get minMa => ma7 != null && ma25 != null && ma99 != null
+      ? min(min(ma7 ?? 0, ma25 ?? 0), ma99 ?? 0)
+      : null;
 
   bool get isBull => open <= close;
 
@@ -49,4 +53,9 @@ class Candle {
         open = double.parse(json[1]),
         close = double.parse(json[4]),
         volume = double.parse(json[5]);
+
+  @override
+  String toString() {
+    return 'Candle(date: $date, high: $high, low: $low, open: $open, close: $close, volume: $volume, ma99: $ma99)';
+  }
 }

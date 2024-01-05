@@ -8,11 +8,13 @@ class ToolBar extends StatelessWidget {
     required this.onZoomInPressed,
     required this.onZoomOutPressed,
     required this.children,
+    required this.showZoomButtons,
   }) : super(key: key);
 
   final void Function() onZoomInPressed;
   final void Function() onZoomOutPressed;
   final List<Widget> children;
+  final bool showZoomButtons;
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +24,24 @@ class ToolBar extends StatelessWidget {
         padding: const EdgeInsets.all(2.0),
         child: Row(
           children: [
-            ToolBarAction(
-              onPressed: onZoomOutPressed,
-              child: Icon(
-                Icons.remove,
-                color: Theme.of(context).grayColor,
+            Visibility(
+              visible: showZoomButtons,
+              child: ToolBarAction(
+                onPressed: onZoomOutPressed,
+                child: Icon(
+                  Icons.remove,
+                  color: Theme.of(context).grayColor,
+                ),
               ),
             ),
-            ToolBarAction(
-              onPressed: onZoomInPressed,
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).grayColor,
+            Visibility(
+              visible: showZoomButtons,
+              child: ToolBarAction(
+                onPressed: onZoomInPressed,
+                child: Icon(
+                  Icons.add,
+                  color: Theme.of(context).grayColor,
+                ),
               ),
             ),
             ...children

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class HelperFunctions {
-  static double log10(num x) => log(x) / ln10;
+  static double log10(num x) => log(x.clamp(0.000000000001, 1000000000)) / ln10;
 
   static double getRoof(double number) {
     int log = log10(number).floor();

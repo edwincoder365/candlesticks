@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class ToolBarAction extends StatelessWidget {
   final void Function() onPressed;
   final Widget child;
-  final double width;
+  final double? width;
 
   const ToolBarAction({
     Key? key,
     required this.child,
     required this.onPressed,
-    this.width = 30,
+    this.width,
   }) : super(key: key);
 
   @override
